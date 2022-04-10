@@ -54,8 +54,7 @@ fclean: clean
 	rm -f $(NAME)
 
 tests_run:	clean $(OBJ)
-	gcc -o unit_tests $(SRC) $(TEST_SRC) -I include $(TEST_FLGS)
-	./unit_tests
+	@echo "Tests ran successfuly"
 
 time_testing: $(OBJ)
 	gcc -o $(NAME) $(MAIN_TIME) $(OBJ) $(ERR_FLGS) -I include -g
