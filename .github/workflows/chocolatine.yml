@@ -25,3 +25,44 @@ jobs:
             ${{ env.MIRROR_URL }}
           ssh_private_key:
             ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+
+  check_repository_cleanliness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - id: check_repository_cleanliness
+        run: |
+          FILES=$(find . -o -name "#*#" -o -name "*~" -o -name "pain_au_chocolat" -o -name "*.o" -o -name "*.a" -o -name "*.so" -o -name "*.gcno" -o -name "*.gcda" -o -name "*.gcov" -name "tmp")
+          for i in $FILES; do
+            echo "::error file=${i#./}, title=Unwanted file detected::${i#./}"
+          done
+          if [ "$FILES" != ""]; then
+            exit 1
+          fi
+
+  check_program_compilation:
+    needs: check_repository_cleanliness
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker:latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: make
+        timeout-minutes: 2
+      - run: make clean
+      - run: |
+            if [ -f $EXECUTABLES ]
+            then
+                ./$EXECUTABLES
+            fi
+
+  run_tests:
+      needs: check_program_compilation
+      runs-on: ubuntu-latest
+      container:
+        image: epitechcontent/epitest-docker:latest
+      steps:
+        - uses: actions/checkout@v3
+        - id: run_tests
+          run: make tests_run
+          timeout-minutes: 2
