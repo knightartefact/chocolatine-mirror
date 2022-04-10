@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v3
       - id: check_repository_cleanliness
         run: |
-          FILES=$(find . -o -name "#*#" -o -name "*~" -o -name "pain_au_chocolat" -o -name "*.o" -o -name "*.a" -o -name "*.so" -o -name "*.gcno" -o -name "*.gcda" -o -name "*.gcov" -name "tmp")
+          FILES=$(find . -name "#*#" -o -name "*~" -o -name "pain_au_chocolat" -o -name "*.o" -o -name "*.a" -o -name "*.so" -o -name "*.gcno" -o -name "*.gcda" -o -name "*.gcov" -name "tmp")
           for i in $FILES; do
             echo "::error file=${i#./}, title=Unwanted file detected::${i#./}"
           done
