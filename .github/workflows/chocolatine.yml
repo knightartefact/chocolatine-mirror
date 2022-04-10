@@ -10,7 +10,7 @@ on:
 
 env:
   MIRROR_URL: "git@github.com:EpitechPromo2026/B-DOP-200-PAR-2-1-chocolatine-sacha.topaloff.git" 
-  EXECUTABLES: "bsq map_test"
+  EXECUTABLES: ""
   
 jobs:
   push_to_mirror:
@@ -52,10 +52,13 @@ jobs:
         timeout-minutes: 2
       - run: make clean
       - run: |
-            if [ -f $EXECUTABLES ]
-            then
-                ./$EXECUTABLES
-            fi
+          OIFS=$IFS
+          IFS=','
+          for x in $EXECUTABLES
+            do
+              ./$x
+            done
+          IFS=$OIFS
 
   run_tests:
       needs: check_program_compilation
